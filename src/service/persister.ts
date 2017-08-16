@@ -15,7 +15,7 @@ import Config = require("./config");
 import log from "./logging";
 
 export function loadDb(config: Config.IConfigProvider) {
-    return mongodb.MongoClient.connect(config.GetString("MongoDbUrl"));
+    return mongodb.MongoClient.connect(process.env.MONGODB_URI);
 }
 
 export interface Persistable {
