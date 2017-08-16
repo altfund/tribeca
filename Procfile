@@ -1,1 +1,1 @@
-web: npm install; node app.js
+web: node index.js
