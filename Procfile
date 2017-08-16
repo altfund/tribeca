@@ -1,1 +1,1 @@
-web: forever start main.js
+web: docker-compose up -d --build
