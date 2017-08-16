@@ -1,1 +1,1 @@
-web: node main.js
+web: forever start main.js
