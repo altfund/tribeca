@@ -12,4 +12,4 @@ EXPOSE 3000 5000
 
 WORKDIR tribeca/service
 
-CMD ["forever", "main.js"]
+CMD ["main.js"]
