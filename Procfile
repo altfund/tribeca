@@ -1,1 +1,1 @@
-web: node service/main.js
+web: forever start main.js
