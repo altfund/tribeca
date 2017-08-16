@@ -132,7 +132,7 @@ const backTestSimulationSetup = (inputData : Array<Models.Market | Models.Market
     
     const getPersister = <T>(collectionName: string) : Promise<Persister.ILoadAll<T>> => new Promise((cb) => cb(new Backtest.BacktestPersister<T>()));
     
-    const getRepository = <T>(defValue: T, collectionName: string) : Persister.ILoadLatest<T> => new Backtest.BacktestPersister<T>([defValue]);
+    const getRepository = <T>(defValue: T, collectionName: string) : Promise<Persister.ILoadLatest<T>> => new Promise(cb => cb(new Backtest.BacktestPersister<T>([defValue])));
     
     const startingActive : Models.SerializedQuotesActive = new Models.SerializedQuotesActive(true, timeProvider.utcNow());
     const startingParameters : Models.QuotingParameters = parameters.quotingParameters;
@@ -214,8 +214,8 @@ const liveTradingSetup = () : SimulationClasses => {
         return new Persister.Persister<T>(timeProvider, coll, collectionName, exchange, pair);
     };
         
-    const getRepository = <T extends Persister.Persistable>(defValue: T, collectionName: string) : Persister.ILoadLatest<T> => 
-        new Persister.RepositoryPersister<T>(db, defValue, collectionName, exchange, pair);
+    const getRepository = async <T extends Persister.Persistable>(defValue: T, collectionName: string) : Promise<Persister.ILoadLatest<T>> => 
+        new Persister.RepositoryPersister<T>(await (await db).collection(collectionName), defValue, collectionName, exchange, pair);
 
     return {
         exchange: exchange,
@@ -238,7 +238,7 @@ interface SimulationClasses {
     getExch(orderCache: Broker.OrderStateCache): Promise<Interfaces.CombinedGateway>;
     getReceiver<T>(topic: string) : Messaging.IReceive<T>;
     getPersister<T extends Persister.Persistable>(collectionName: string) : Promise<Persister.ILoadAll<T>>;
-    getRepository<T extends Persister.Persistable>(defValue: T, collectionName: string) : Persister.ILoadLatest<T>;
+    getRepository<T>(defValue: T, collectionName: string) : Promise<Persister.ILoadLatest<T>>;
     getPublisher<T>(topic: string, persister?: Persister.ILoadAll<T>): Messaging.IPublish<T>;
 }
 
@@ -255,8 +255,8 @@ const runTradingSystem = async (classes: SimulationClasses) : Promise<void> => {
     const tsvPersister = await getPersister<Models.TradeSafety>("tsv");
     const marketDataPersister = await getPersister<Models.Market>(Messaging.Topics.MarketData);
     
-    const activePersister = classes.getRepository<Models.SerializedQuotesActive>(classes.startingActive, Messaging.Topics.ActiveChange);
-    const paramsPersister = classes.getRepository<Models.QuotingParameters>(classes.startingParameters, Messaging.Topics.QuotingParametersChange);
+    const activePersister = await classes.getRepository<Models.SerializedQuotesActive>(classes.startingActive, Messaging.Topics.ActiveChange);
+    const paramsPersister = await classes.getRepository<Models.QuotingParameters>(classes.startingParameters, Messaging.Topics.QuotingParametersChange);
     
     const exchange = classes.exchange;
 
@@ -301,10 +301,10 @@ const runTradingSystem = async (classes: SimulationClasses) : Promise<void> => {
     messages.publish("start up");
 
     const getReceiver = classes.getReceiver;
-    const activeReceiver = getReceiver(Messaging.Topics.ActiveChange);
-    const quotingParametersReceiver = getReceiver(Messaging.Topics.QuotingParametersChange);
-    const submitOrderReceiver = getReceiver(Messaging.Topics.SubmitNewOrder);
-    const cancelOrderReceiver = getReceiver(Messaging.Topics.CancelOrder);
+    const activeReceiver = getReceiver<boolean>(Messaging.Topics.ActiveChange);
+    const quotingParametersReceiver = getReceiver<Models.QuotingParameters>(Messaging.Topics.QuotingParametersChange);
+    const submitOrderReceiver = getReceiver<Models.OrderRequestFromUI>(Messaging.Topics.SubmitNewOrder);
+    const cancelOrderReceiver = getReceiver<Models.OrderStatusReport>(Messaging.Topics.CancelOrder);
     const cancelAllOrdersReceiver = getReceiver(Messaging.Topics.CancelAllOrders);
             
     const broker = new Broker.ExchangeBroker(pair, gateway.md, gateway.base, gateway.oe, connectivity);
