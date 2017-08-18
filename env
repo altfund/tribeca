@@ -47,3 +47,5 @@ BitfinexOrderDestination=Bitfinex
 ## Coinbase
 #CoinbaseRestUrl=https://api.gdax.com
 #CoinbaseWebsocketUrl=wss://ws-feed.gdax.com
+
+TRIBECA_CONFIG_FILE=tribeca.json
