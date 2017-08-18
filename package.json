@@ -70,8 +70,7 @@
     "mocha": "3.2.0"
   },
   "scripts": {
-    "test": "mocha",
-    "postinstall": "grunt"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
