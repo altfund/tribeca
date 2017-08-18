@@ -70,7 +70,8 @@
     "mocha": "3.2.0"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "postinstall": "bash ./post_install.sh"
   },
   "repository": {
     "type": "git",
