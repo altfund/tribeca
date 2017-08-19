@@ -71,7 +71,7 @@
   },
   "scripts": {
     "test": "mocha",
-    "postinstall": "bash ./post_install.sh"
+    "postinstall": "grunt default"
   },
   "repository": {
     "type": "git",

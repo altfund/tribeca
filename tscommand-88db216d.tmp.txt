@@ -1,0 +1,1 @@
+src/service/main.ts src/.baseDir.ts --sourcemap --removeComments --target ES6 --module commonjs --outDir tribeca

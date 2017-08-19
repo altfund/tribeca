@@ -49,3 +49,4 @@ BitfinexOrderDestination=Bitfinex
 #CoinbaseWebsocketUrl=wss://ws-feed.gdax.com
 
 TRIBECA_CONFIG_FILE=tribeca.json
+PORT=3000
