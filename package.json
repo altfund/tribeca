@@ -70,8 +70,7 @@
     "mocha": "3.2.0"
   },
   "scripts": {
-    "test": "mocha",
-    "postinstall": "echo postinstall time; ./node_modules/grunt-cli/bin/grunt"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
