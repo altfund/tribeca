@@ -71,7 +71,7 @@
   },
   "scripts": {
     "test": "mocha",
-    "postinstall": "grunt default"
+    "postinstall": "echo postinstall time; ./node_modules/grunt-cli/bin/grunt"
   },
   "repository": {
     "type": "git",
