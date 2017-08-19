@@ -1,1 +1,1 @@
-web: grunt default
+worker: grunt default
