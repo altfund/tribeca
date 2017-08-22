@@ -32,4 +32,6 @@
     "BitfinexKey": "NULL",
     "BitfinexSecret": "NULL",
     "BitfinexOrderDestination": "Bitfinex"
+    
+    "NullGatewayTick": 100
 }
