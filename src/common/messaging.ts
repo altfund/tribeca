@@ -253,4 +253,5 @@ export class Topics {
     static TargetBasePosition = "tbp";
     static TradeSafetyValue = "tsv";
     static CancelAllOrders = "cao";
+    static WriteConfigValue = "wv";
 }

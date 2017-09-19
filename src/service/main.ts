@@ -146,7 +146,8 @@ const backTestSimulationSetup = (inputData : Array<Models.Market | Models.Market
         getReceiver: getReceiver,
         getPersister: getPersister,
         getRepository: getRepository,
-        getPublisher: getPublisher
+        getPublisher: getPublisher,
+        writeConfigValue: () => {}
     };
 };
 
@@ -183,7 +184,7 @@ const liveTradingSetup = () : SimulationClasses => {
         }
     };
 
-    const exchange = getExchange();
+    let exchange = getExchange();
 
     const getExch = (orderCache: Broker.OrderStateCache): Promise<Interfaces.CombinedGateway> => {
         switch (exchange) {
@@ -217,7 +218,25 @@ const liveTradingSetup = () : SimulationClasses => {
     const getRepository = async <T extends Persister.Persistable>(defValue: T, collectionName: string) : Promise<Persister.ILoadLatest<T>> =>
         new Persister.RepositoryPersister<T>(await (await db).collection(collectionName), defValue, collectionName, exchange, pair);
 
-    return {
+    let result;
+
+    const getExchangeModel = (ex: string) => {
+        switch (ex) {
+            case "hitbtc": return Models.Exchange.HitBtc;
+            case "coinbase": return Models.Exchange.Coinbase;
+            case "okcoin": return Models.Exchange.OkCoin;
+            case "null": return Models.Exchange.Null;
+            case "bitfinex": return Models.Exchange.Bitfinex;
+            default: throw new Error("unknown configuration env variable EXCHANGE " + ex);
+        }        
+    }
+
+    const writeConfigValue = (key: string, value: any) => {
+        config.WritePriority(key, value);
+        process.exit();
+    }
+
+    result = {
         exchange: exchange,
         startingActive: defaultActive,
         startingParameters: defaultQuotingParameters,
@@ -226,8 +245,11 @@ const liveTradingSetup = () : SimulationClasses => {
         getReceiver: getReceiver,
         getPersister: getPersister,
         getRepository: getRepository,
-        getPublisher: getPublisher
+        getPublisher: getPublisher,
+        writeConfigValue: writeConfigValue
     };
+
+    return result;
 };
 
 interface SimulationClasses {
@@ -240,6 +262,7 @@ interface SimulationClasses {
     getPersister<T extends Persister.Persistable>(collectionName: string) : Promise<Persister.ILoadAll<T>>;
     getRepository<T>(defValue: T, collectionName: string) : Promise<Persister.ILoadLatest<T>>;
     getPublisher<T>(topic: string, persister?: Persister.ILoadAll<T>): Messaging.IPublish<T>;
+    writeConfigValue(key: string, value: any);
 }
 
 const runTradingSystem = async (classes: SimulationClasses) : Promise<void> => {
@@ -248,6 +271,7 @@ const runTradingSystem = async (classes: SimulationClasses) : Promise<void> => {
     const tradesPersister = await getPersister<Models.Trade>("trades");
     const fairValuePersister = await getPersister<Models.FairValue>("fv");
     const mktTradePersister = await getPersister<Models.MarketTrade>("mt");
+
     const positionPersister = await getPersister<Models.PositionReport>("pos");
     const messagesPersister = await getPersister<Models.Message>("msg");
     const rfvPersister = await getPersister<Models.RegularFairValue>("rfv");
@@ -277,7 +301,17 @@ const runTradingSystem = async (classes: SimulationClasses) : Promise<void> => {
     const timeProvider = classes.timeProvider;
     const getPublisher = classes.getPublisher;
 
-    const gateway = await classes.getExch(orderCache);
+    let gateway;
+
+    try{
+        gateway = await classes.getExch(orderCache);
+    }
+    catch(err){
+        const message: string = err.message;
+        if (message.startsWith("unable to match pair")){
+            classes.writeConfigValue("EXCHANGE", "Null");
+        }
+    }
 
     const advert = new Models.ProductAdvertisement(exchange, pair, config.GetString("TRIBECA_MODE"), gateway.base.minTickIncrement);
     getPublisher(Messaging.Topics.ProductAdvertisement).registerSnapshot(() => [advert]).publish(advert);
@@ -306,6 +340,11 @@ const runTradingSystem = async (classes: SimulationClasses) : Promise<void> => {
     const submitOrderReceiver = getReceiver<Models.OrderRequestFromUI>(Messaging.Topics.SubmitNewOrder);
     const cancelOrderReceiver = getReceiver<Models.OrderStatusReport>(Messaging.Topics.CancelOrder);
     const cancelAllOrdersReceiver = getReceiver(Messaging.Topics.CancelAllOrders);
+    const writeConfigValueReceiver = getReceiver<Models.WriteConfigRequest>(Messaging.Topics.WriteConfigValue);
+
+    writeConfigValueReceiver.registerReceiver((o :Models.WriteConfigRequest) => {
+        classes.writeConfigValue(o.key, o.value);
+    });
 
     const broker = new Broker.ExchangeBroker(pair, gateway.md, gateway.base, gateway.oe, connectivity);
     mainLog.info({

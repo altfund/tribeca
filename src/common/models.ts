@@ -353,3 +353,7 @@ export class TargetBasePositionValue {
 export class CancelAllOrdersRequest {
     constructor() {}
 }
+
+export class WriteConfigRequest {
+    constructor(public key: string, public value: string) {}
+}

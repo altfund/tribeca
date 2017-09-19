@@ -38,7 +38,14 @@ interface MainWindowScope extends ng.IScope {
     pair : Pair.DisplayPair;
     exch_name : string;
     pair_name : string;
+    exch_list: any;
+    selectedExchange: string;
+    selectedPair: string;
+    selectedQuote: string;
+    base_list: any;
+    quote_list: any;
     cancelAllOrders();
+    setExchange(ex: string);
 }
 
 class DisplayOrder {
@@ -88,9 +95,25 @@ var uiCtrl = ($scope : MainWindowScope,
     
     var cancelAllFirer = fireFactory.getFire(Messaging.Topics.CancelAllOrders);
     $scope.cancelAllOrders = () => cancelAllFirer.fire(new Models.CancelAllOrdersRequest());
-                  
+
+    var writeConfigValueFirer = fireFactory.getFire(Messaging.Topics.WriteConfigValue);
+    $scope.writeConfigValue = (key: string, value: any) => writeConfigValueFirer.fire(new Models.WriteConfigRequest(key, value));
+    
+    $scope.GetTradedPair = (pair: string, quote: string) => {
+        console.log(pair);
+        if ((pair === undefined) || (quote === undefined)) return;
+        $scope.writeConfigValue('TradedPair', pair + '/' + quote);
+    }
+
     $scope.order = new DisplayOrder(fireFactory, $log);
     $scope.pair = null;
+
+    $scope.base_list = [];
+    for(var n in Models.Currency) {
+        $scope.base_list.push({name: <any>Models.Currency[n]});
+    }
+
+    //$scope.selectedPair = Models.Currency[pa.pair.base];
 
     var onAdvert = (pa : Models.ProductAdvertisement) => {
         $log.info("advert", pa);
@@ -98,7 +121,16 @@ var uiCtrl = ($scope : MainWindowScope,
         $scope.env = pa.environment;
         $scope.pair_name = Models.Currency[pa.pair.base] + "/" + Models.Currency[pa.pair.quote];
         $scope.exch_name = Models.Exchange[pa.exchange];
+        $scope.exch_list = [{name:"Coinbase", value:"Coinbase"}, {name:"HitBtc", value:"HitBtc"}, {name:"OkCoin", value:"OkCoin"}, {name:"Bitfinex", value:"Bitfinex"}];
+        $scope.base_list;
+        $scope.quote_list = $scope.base_list;
         $scope.pair = new Pair.DisplayPair($scope, subscriberFactory, fireFactory);
+        console.log("Currency:" + Models.Currency[pa.pair.base]);
+        console.log("Currency:" + Models.Currency[pa.pair.quote]);
+        console.log(Models.Exchange[pa.exchange]);
+        $scope.selectedExchange = Models.Exchange[pa.exchange];
+        $scope.selectedPair = Models.Currency[pa.pair.base];
+        $scope.selectedQuote = Models.Currency[pa.pair.quote];
         product.advert = pa;
         product.fixed = -1*Math.floor(Math.log10(pa.minTick)); 
     };

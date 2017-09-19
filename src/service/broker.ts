@@ -330,7 +330,8 @@ export class OrderBroker implements Interfaces.IOrderBroker {
     };
 
     private orderStatusSnapshot = () : Models.OrderStatusReport[] => {
-        return Array.from(this._orderCache.allOrders.values()).filter(this.shouldPublish);
+        //return Array.from(this._orderCache.allOrders.values()).filter(this.shouldPublish);
+        return Array.from(this._orderCache.allOrders.values());
     }
 
     constructor(private _timeProvider: Utils.ITimeProvider,
