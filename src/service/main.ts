@@ -301,7 +301,7 @@ const runTradingSystem = async (classes: SimulationClasses) : Promise<void> => {
     const timeProvider = classes.timeProvider;
     const getPublisher = classes.getPublisher;
 
-    let gateway;
+    let gateway = await NullGw.createNullGateway(config, pair);
 
     try{
         gateway = await classes.getExch(orderCache);
