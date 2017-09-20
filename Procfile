@@ -1,1 +1,1 @@
-web: grunt compile & cd ./tribeca/service & forever start main.js
+web: grunt compile && cd ./tribeca/service && forever start main.js
