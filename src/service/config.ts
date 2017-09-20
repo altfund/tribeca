@@ -17,7 +17,7 @@ export class ConfigProvider implements IConfigProvider {
     private _config: { [key: string]: string } = {};
     private _priorityconfig: { [key: string]: string } = {};
     private _configfile;
-    private _priorityConfigFile = '/tribeca/priority.config.json';
+    private _priorityConfigFile = './priority.config.json';
     constructor() {
         this.inBacktestMode = (process.env["TRIBECA_BACKTEST_MODE"] || "false") === "true";
         this._configfile = process.env["TRIBECA_CONFIG_FILE"] || "tribeca.json";
