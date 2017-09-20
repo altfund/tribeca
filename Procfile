@@ -1,2 +1,2 @@
 web: cd ./tribeca/service; forever main.js
-worker: grunt default
+worker: grunt compile
