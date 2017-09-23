@@ -170,6 +170,12 @@
                                 ng-change="GetTradedPair(selectedBase, selectedQuote)">
                                 <option ng-repeat="quote in quote_list" value="{{quote.name}}">{{quote.name}}</option>
                             </select>
+                            <select class="form-control input-sm"
+                                ng-disabled="!pair.active.connected"
+                                ng-model="selectedShowOrders"
+                                ng-change="writeConfigValue('ShowAllOrders', selectedShowOrders)">
+                                <option ng-repeat="showorders in showorders_list" value="{{showorders.name}}">{{showorders.name}}</option>
+                            </select>
                             <!-- <button class="col-md-12 col-xs-3" ng-click="setExchange()">
                                 Test set exchange
                             </button> -->

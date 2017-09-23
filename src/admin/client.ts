@@ -42,6 +42,7 @@ interface MainWindowScope extends ng.IScope {
     selectedExchange: string;
     selectedPair: string;
     selectedQuote: string;
+    selectedShowOrders: string;
     base_list: any;
     quote_list: any;
     cancelAllOrders();
@@ -124,6 +125,7 @@ var uiCtrl = ($scope : MainWindowScope,
         $scope.exch_list = [{name:"Coinbase", value:"Coinbase"}, {name:"HitBtc", value:"HitBtc"}, {name:"OkCoin", value:"OkCoin"}, {name:"Bitfinex", value:"Bitfinex"}];
         $scope.base_list;
         $scope.quote_list = $scope.base_list;
+        $scope.showorders_list = [{name:"All", value:"All"},{name:"Filter", value:"Filter"}];
         $scope.pair = new Pair.DisplayPair($scope, subscriberFactory, fireFactory);
         console.log("Currency:" + Models.Currency[pa.pair.base]);
         console.log("Currency:" + Models.Currency[pa.pair.quote]);

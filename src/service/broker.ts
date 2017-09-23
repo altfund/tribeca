@@ -15,9 +15,12 @@ import Q = require("q");
 import Interfaces = require("./interfaces");
 import Persister = require("./persister");
 import util = require("util");
+import Config = require("./config");
 import Messages = require("./messages");
 import * as moment from "moment";
 import log from "./logging";
+
+const config = new Config.ConfigProvider();
 
 export class MarketDataBroker implements Interfaces.IMarketDataBroker {
     MarketData = new Utils.Evt<Models.Market>();
@@ -318,15 +321,19 @@ export class OrderBroker implements Interfaces.IOrderBroker {
     };
 
     private shouldPublish = (o: Models.OrderStatusReport) : boolean => {
-        if (o.source === null) throw Error(JSON.stringify(o));
+        console.log(config.GetString("ShowAllOrders"));
+        if (config.GetString("ShowAllOrders") != "All") {
+            if (o.source === null) throw Error(JSON.stringify(o));
 
-        switch (o.source) {
-            case Models.OrderSource.Quote:
-            case Models.OrderSource.Unknown:
-                return false;
-            default:
-                return true;
+            switch (o.source) {
+                case Models.OrderSource.Quote:
+                case Models.OrderSource.Unknown:
+                    return false;
+                default:
+                    return true;
+            }
         }
+        return true;
     };
 
     private orderStatusSnapshot = () : Models.OrderStatusReport[] => {
