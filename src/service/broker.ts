@@ -321,7 +321,6 @@ export class OrderBroker implements Interfaces.IOrderBroker {
     };
 
     private shouldPublish = (o: Models.OrderStatusReport) : boolean => {
-        console.log(config.GetString("ShowAllOrders"));
         if (config.GetString("ShowAllOrders") != "All") {
             if (o.source === null) throw Error(JSON.stringify(o));
 

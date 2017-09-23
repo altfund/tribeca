@@ -1,6 +1,6 @@
 {
     "TRIBECA_MODE": "dev",
-    "EXCHANGE": "null",
+    "EXCHANGE": "coinbase",
     "TradedPair": "BTC/USD",
     "MongoDbUrl": "mongodb://localhost:27017/tribeca",
     "WebClientUsername": "NULL",
@@ -31,7 +31,8 @@
     "BitfinexHttpUrl": "https://api.bitfinex.com/v1",
     "BitfinexKey": "NULL",
     "BitfinexSecret": "NULL",
-    "BitfinexOrderDestination": "Bitfinex"
+    "BitfinexOrderDestination": "Bitfinex",
     
-    "NullGatewayTick": 100
+    "NullGatewayTick": 100,
+    "ShowAllOrders": "All"
 }
