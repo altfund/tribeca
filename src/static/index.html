@@ -152,24 +152,28 @@
                             <button class="col-md-12 col-xs-3" ng-disabled="!pair.active.connected" ng-class="pair.active.getClass()" ng-click="pair.active.submit()">
                                 {{ pair_name }}
                             </button>
+                            <span>Exchange</span>
                             <select class="form-control input-sm"
                                 ng-disabled="!pair.active.connected"
                                 ng-model="selectedExchange" 
                                 ng-change="writeConfigValue('EXCHANGE', selectedExchange)">
                                 <option ng-repeat="ex in exch_list" value="{{ex.name}}">{{ex.name}}</option>
                             </select>
+                            <span>Base</span>
                             <select class="form-control input-sm"
                                 ng-disabled="!pair.active.connected"
                                 ng-model="selectedBase"
                                 ng-change="GetTradedPair(selectedBase, selectedQuote)">
                                 <option ng-repeat="base in base_list" value="{{base.name}}">{{base.name}}</option>
                             </select>
+                            <span>Quote</span>
                             <select class="form-control input-sm"
                                 ng-disabled="!pair.active.connected"
                                 ng-model="selectedQuote"
                                 ng-change="GetTradedPair(selectedBase, selectedQuote)">
                                 <option ng-repeat="quote in quote_list" value="{{quote.name}}">{{quote.name}}</option>
                             </select>
+                            <span>Show orders</span>
                             <select class="form-control input-sm"
                                 ng-disabled="!pair.active.connected"
                                 ng-model="selectedShowOrders"

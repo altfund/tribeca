@@ -114,24 +114,19 @@ var uiCtrl = ($scope : MainWindowScope,
         $scope.base_list.push({name: <any>Models.Currency[n]});
     }
 
-    //$scope.selectedPair = Models.Currency[pa.pair.base];
-
     var onAdvert = (pa : Models.ProductAdvertisement) => {
         $log.info("advert", pa);
         $scope.connected = true;
         $scope.env = pa.environment;
         $scope.pair_name = Models.Currency[pa.pair.base] + "/" + Models.Currency[pa.pair.quote];
         $scope.exch_name = Models.Exchange[pa.exchange];
-        $scope.exch_list = [{name:"Coinbase", value:"Coinbase"}, {name:"HitBtc", value:"HitBtc"}, {name:"OkCoin", value:"OkCoin"}, {name:"Bitfinex", value:"Bitfinex"}];
+        $scope.exch_list = [{name:"Null", value:"Null"}, {name:"Coinbase", value:"Coinbase"}, {name:"HitBtc", value:"HitBtc"}, {name:"OkCoin", value:"OkCoin"}, {name:"Bitfinex", value:"Bitfinex"}];
         $scope.base_list;
         $scope.quote_list = $scope.base_list;
         $scope.showorders_list = [{name:"All", value:"All"},{name:"Filter", value:"Filter"}];
         $scope.pair = new Pair.DisplayPair($scope, subscriberFactory, fireFactory);
-        console.log("Currency:" + Models.Currency[pa.pair.base]);
-        console.log("Currency:" + Models.Currency[pa.pair.quote]);
-        console.log(Models.Exchange[pa.exchange]);
         $scope.selectedExchange = Models.Exchange[pa.exchange];
-        $scope.selectedPair = Models.Currency[pa.pair.base];
+        $scope.selectedBase = Models.Currency[pa.pair.base];
         $scope.selectedQuote = Models.Currency[pa.pair.quote];
         product.advert = pa;
         product.fixed = -1*Math.floor(Math.log10(pa.minTick)); 

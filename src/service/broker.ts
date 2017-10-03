@@ -321,6 +321,7 @@ export class OrderBroker implements Interfaces.IOrderBroker {
     };
 
     private shouldPublish = (o: Models.OrderStatusReport) : boolean => {
+        console.log("ShowAllOrders", config.GetString("ShowAllOrders"));
         if (config.GetString("ShowAllOrders") != "All") {
             if (o.source === null) throw Error(JSON.stringify(o));
 
@@ -336,8 +337,8 @@ export class OrderBroker implements Interfaces.IOrderBroker {
     };
 
     private orderStatusSnapshot = () : Models.OrderStatusReport[] => {
-        //return Array.from(this._orderCache.allOrders.values()).filter(this.shouldPublish);
-        return Array.from(this._orderCache.allOrders.values());
+        return Array.from(this._orderCache.allOrders.values()).filter(this.shouldPublish);
+        //return Array.from(this._orderCache.allOrders.values());
     }
 
     constructor(private _timeProvider: Utils.ITimeProvider,
