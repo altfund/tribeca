@@ -123,7 +123,7 @@ var uiCtrl = ($scope : MainWindowScope,
         $scope.exch_list = [{name:"Null", value:"Null"}, {name:"Coinbase", value:"Coinbase"}, {name:"HitBtc", value:"HitBtc"}, {name:"OkCoin", value:"OkCoin"}, {name:"Bitfinex", value:"Bitfinex"}];
         $scope.base_list;
         $scope.quote_list = $scope.base_list;
-        $scope.showorders_list = [{name:"All", value:"All"},{name:"Filter", value:"Filter"}];
+        $scope.showorders_list = [{ name: "true", value: "true" }, { name: "false", value: "false" }];
         $scope.pair = new Pair.DisplayPair($scope, subscriberFactory, fireFactory);
         $scope.selectedExchange = Models.Exchange[pa.exchange];
         $scope.selectedBase = Models.Currency[pa.pair.base];
