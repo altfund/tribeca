@@ -1,13 +1,14 @@
 # General config properties. Properties with `NULL` should be replaced with your own exchange account information.
 TRIBECA_MODE=dev
-EXCHANGE=null
-TradedPair=BTC/USD
-WebClientUsername=NULL
-WebClientPassword=NULL
+EXCHANGE=Null
+TradedPair=BTC/DASH
+WebClientUsername=testuser
+WebClientPassword=testpassword
 WebClientListenPort=3000
-MongoDbUrl=mongodb://tribeca-mongo:27017/tribeca
+MONGODB_URI=mongodb://tribeca-mongo:27017/tribeca
+ShowAllOrders=true
+NullGatewayTick=100
 
-NullGatewayTick=1
 
 # DEV
 ## HitBtc

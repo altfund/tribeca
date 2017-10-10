@@ -20,8 +20,6 @@ import Messages = require("./messages");
 import * as moment from "moment";
 import log from "./logging";
 
-const config = new Config.ConfigProvider();
-
 export class MarketDataBroker implements Interfaces.IMarketDataBroker {
     MarketData = new Utils.Evt<Models.Market>();
     public get currentBook() : Models.Market { return this._currentBook; }
@@ -321,24 +319,20 @@ export class OrderBroker implements Interfaces.IOrderBroker {
     };
 
     private shouldPublish = (o: Models.OrderStatusReport) : boolean => {
-        console.log("ShowAllOrders", config.GetString("ShowAllOrders"));
-        if (config.GetString("ShowAllOrders") != "All") {
-            if (o.source === null) throw Error(JSON.stringify(o));
+        if (o.source === null) throw Error(JSON.stringify(o));
+        if (this._publishAllOrders) return true;
 
-            switch (o.source) {
-                case Models.OrderSource.Quote:
-                case Models.OrderSource.Unknown:
-                    return false;
-                default:
-                    return true;
-            }
+        switch (o.source) {
+            case Models.OrderSource.Quote:
+            case Models.OrderSource.Unknown:
+                return false;
+            default:
+                return true;
         }
-        return true;
     };
 
     private orderStatusSnapshot = () : Models.OrderStatusReport[] => {
         return Array.from(this._orderCache.allOrders.values()).filter(this.shouldPublish);
-        //return Array.from(this._orderCache.allOrders.values());
     }
 
     constructor(private _timeProvider: Utils.ITimeProvider,
@@ -354,7 +348,8 @@ export class OrderBroker implements Interfaces.IOrderBroker {
                 private _messages : Messages.MessagesPubisher,
                 private _orderCache : OrderStateCache,
                 initOrders : Models.OrderStatusReport[],
-                initTrades : Models.Trade[]) {
+                initTrades : Models.Trade[],
+                private readonly _publishAllOrders: boolean) {
         _.each(initOrders, this.addOrderStatusInMemory);
         _.each(initTrades, t => this._trades.push(t));
                 
